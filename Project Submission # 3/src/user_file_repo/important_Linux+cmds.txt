@@ -1,0 +1,16 @@
+# Create a desktop shortcut for file, folder
+ln -s $PWD ~/Desktop/
+
+# Extract tar files
+tar -xzvf jre-8u401-linux-i586.tar.gz -C $HOME/bin
+
+Explanation of the command:
+
+tar: The command-line utility used for archiving files.
+-x: Extract the contents of the archive.
+-z: Specifies that the archive is compressed with gzip.
+-v: Verbose mode, which displays the progress of the extraction.
+-f jre-8u401-linux-i586.tar.gz: Specifies the input archive file.
+-C $HOME/bin: Specifies the destination directory where the contents of the archive will be extracted, which in this case is $HOME/bin.
+
+
