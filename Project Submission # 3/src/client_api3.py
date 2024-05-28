@@ -239,10 +239,55 @@ def listAction():
     listFiles(directory)
 
 
+
+# Function to read user config file and store contents in a dictionary
+def read_user_config(file_path):
+    credentials = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            parts = line.strip().split()
+            if len(parts) == 2:
+                username, password_hash = parts
+                credentials[username] = password_hash
+    return credentials
+
+
 # Implementation is another file, will integrate it in main source in the next phase 
 def connect_action():
-    status_var.set("Status: Connect button pressed")
-    messagebox.showinfo("Action", "Connect button pressed")
+    def authenticate():
+        nonlocal attempts_left
+        username = username_entry.get()
+        password = password_entry.get()
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        if username in credentials and credentials[username] == hashed_password:
+            messagebox.showinfo("Success", f"Welcome, {username}")
+            connect_window.destroy()
+        else:
+            attempts_left -= 1
+            if attempts_left == 0:
+                messagebox.showerror("Error", "Max login attempts reached. Try again.")
+                connect_window.destroy()
+            else:
+                status_var.set(f"Status: Invalid credentials. {attempts_left} login attempts remaining")
+
+    # Read user config file
+    credentials = read_user_config(user_config_file)
+    attempts_left = 3
+
+    connect_window = tk.Toplevel()
+    connect_window.title("Login")
+
+    tk.Label(connect_window, text="Username:").grid(row=0, column=0, padx=10, pady=5)
+    username_entry = tk.Entry(connect_window)
+    username_entry.grid(row=0, column=1, padx=10, pady=5)
+
+    tk.Label(connect_window, text="Password:").grid(row=1, column=0, padx=10, pady=5)
+    password_entry = tk.Entry(connect_window, show="*")
+    password_entry.grid(row=1, column=1, padx=10, pady=5)
+
+    login_button = tk.Button(connect_window, text="Login", command=authenticate)
+    login_button.grid(row=2, columnspan=2, padx=10, pady=5)
+
 
 
 # Implementation is another file, will integrate it in main source in the next phase 
@@ -325,5 +370,8 @@ if __name__ == "__main__":
     
     global filenames_file
     filenames_file = os.path.join(ROOT_DIR, "filenames.txt")
+
+    global user_config_file
+    user_config_file = os.path.join(ROOT_DIR, "dfs_users.config")
     
     create_main_window()
