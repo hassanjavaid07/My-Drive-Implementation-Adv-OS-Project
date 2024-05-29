@@ -3,7 +3,7 @@
 * **NAME = HASSAN JAVAID, SAAD BIN HAMMAD**
 * **ROLL NO. = MSCS23001, MSCS23008**'
 * **PROJECT_ABSTRACT =  Implementation of Distributed File System (DFS) with 
-                        master-slave MapReduce file processing and client/server 
+                        master-slave file processing and client/server 
                         communicaiton**
 * **DATE OF SUBMISSION = JUNE 07, 2024**
 """
@@ -18,23 +18,92 @@ import platform
 import subprocess
 global ROOT_DIR
 from dfscontrol import*
-    
+
+metadata_folder = "metadata"
+# authenticated_user = None
+
+
+
+# Implements user login and user authentication 
+def connect_action():
+    def authenticate():
+        nonlocal attempts_left
+        username = username_entry.get()
+        password = password_entry.get()
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        if username in credentials and credentials[username] == hashed_password:
+            global authenticated_user
+            authenticated_user = username
+            welcome_message = f"Welcome, {authenticated_user}"
+            messagebox.showinfo("Success", welcome_message)
+            status_var.set(f"Status: {welcome_message}")
+            connect_window.destroy()
+            enable_buttons()
+            connect_button.config(state=tk.DISABLED)
+        else:
+            attempts_left -= 1
+            if attempts_left == 0:
+                messagebox.showerror("Error", "Max login attempts reached. Try again.")
+                connect_window.destroy()
+            else:
+                status_var.set(f"Status: Invalid credentials. {attempts_left} login attempts remaining")
+
+    # Read user config file
+    global num_users
+    credentials, num_users = read_user_config(user_config_file)
+    attempts_left = 3
+
+    connect_window = tk.Toplevel()
+    connect_window.title("Login")
+
+    tk.Label(connect_window, text="Username:").grid(row=0, column=0, padx=10, pady=5)
+    username_entry = tk.Entry(connect_window)
+    username_entry.grid(row=0, column=1, padx=10, pady=5)
+
+    tk.Label(connect_window, text="Password:").grid(row=1, column=0, padx=10, pady=5)
+    password_entry = tk.Entry(connect_window, show="*")
+    password_entry.grid(row=1, column=1, padx=10, pady=5)
+
+    login_button = tk.Button(connect_window, text="Login", command=authenticate)
+    login_button.grid(row=2, columnspan=2, padx=10, pady=5)
+
 
 
 # Function to read the list of filenames from filename.txt file
 def read_filenames():
     if os.path.exists(filenames_file):
+        user_files = {}
         with open(filenames_file, "r") as file:
-            return file.read().splitlines()
+            lines = file.readlines()
+            if not lines:
+                return None
+            for line in lines:
+                username, filename = line.strip().split(':')
+                if username in user_files:
+                    user_files[username].append(filename)
+                else:
+                    user_files[username] = [filename]
+            return user_files      
     else:
-        return []
+        return {}
 
 
 
 # Function to update the list of filenames in filename.txt file
 def update_filenames(filename):
     with open(filenames_file, "a") as file:
-        file.write(f"{filename}\n")
+        file.write(f"{authenticated_user}:{filename}\n")
+
+# def update_filenames(filename):
+#     with open(filenames_file, "r+") as file:
+#         lines = file.readlines()
+#         usernames = [line.split(':')[0] for line in lines] 
+#         filenames = [line.split(':')[1].strip() for line in lines] 
+        
+#         # Check if the filename is already associated with any user
+#         # Append if filename and authenticated user not present
+#         if filename not in filenames and authenticated_user not in usernames:
+#             file.write(f"{authenticated_user}:{filename}\n")  
 
 
 
@@ -46,9 +115,9 @@ def uploadFile(file_path):
     fname = os.path.basename(file_path)
     print(fname)
     metadata_fn = f"{fname}_metadata_enc.json"
-    metadata_file = os.path.join(ROOT_DIR, metadata_fn)
+    metadata_file = os.path.join(ROOT_DIR, metadata_folder, authenticated_user, metadata_fn)
     encryption_key = get_encryption_key(fname)
-    putFile(file_path, chunk_servers, chunk_size, encryption_key,metadata_file, 
+    putFile(file_path, chunk_servers, chunk_size, encryption_key, metadata_file, 
             master_key_bytes, ROOT_DIR)
     status_var.set(f"File '{fname}' uploaded successfully.")
 
@@ -61,14 +130,15 @@ def downloadFile(file_path, encryption_key):
     print(f"Downloading file: {file_path}")
     fname = os.path.basename(file_path)
     print(fname)
-    metadata_fn = f"{fname}_metadata_enc.json"
-    metadata_file = os.path.join(ROOT_DIR, metadata_fn)
-
+    
     fname_without_extension = os.path.splitext(fname)[0]
     output_fn = fname_without_extension + "_rec.txt"
     output_folder_name =  "outputs" 
-    output_folder = os.path.join(ROOT_DIR, output_folder_name)     
-    output_file = os.path.join(ROOT_DIR, output_folder_name, output_fn)
+    output_folder = os.path.join(ROOT_DIR, output_folder_name, authenticated_user)     
+    output_file = os.path.join(ROOT_DIR, output_folder_name, authenticated_user, output_fn)
+
+    metadata_fn = f"{fname}_metadata_enc.json"
+    metadata_file = os.path.join(ROOT_DIR, metadata_folder, authenticated_user, metadata_fn)
 
     if not os.path.exists(metadata_file):
         print("Invalid filename and/or Metadata file not found.")
@@ -78,7 +148,7 @@ def downloadFile(file_path, encryption_key):
         return
 
     getFile(metadata_file, output_file, encryption_key, master_key_bytes, ROOT_DIR)
-    status_var.set(f"File '{fname}' downloaded to folder {output_folder_name} as {output_fn} successfully.")
+    status_var.set(f"File '{fname}' downloaded to folder {output_folder} as {output_fn} successfully.")
     openFolder(output_folder)
     
     # Compare checksums to verify file integrity of merged and input
@@ -179,7 +249,7 @@ def listFiles(directory):
 def save_encryption_key(filename):
     encryption_key = get_random_bytes(32)
     with open(enc_config_fn, "a") as file:
-        file.write(f"{filename}:{encryption_key.hex()}\n")
+        file.write(f"{authenticated_user}:{filename}:{encryption_key.hex()}\n")
     print(f"Encryption key for {filename} saved.")
 
 
@@ -191,10 +261,22 @@ def get_encryption_key(filename):
     with open(enc_config_fn, "r") as file:
         lines = file.readlines()
         for line in lines:
-            file_name, key_hex = line.strip().split(":")
-            if file_name == filename:
-                return bytes.fromhex(key_hex)
+            username, file_name, key_hex = line.strip().split(":")
+            if username == authenticated_user:
+                if file_name == filename:
+                    return bytes.fromhex(key_hex)
     return None
+
+
+# Implements checks to ensure user has uploaded a specific file
+def isUserFileNamePresent(filename):
+    with open(filenames_file, "r") as file:
+        for line in file:
+            parts = line.strip().split(":")
+            if len(parts) == 2 and parts[0] == authenticated_user and parts[1] == filename:
+                return True
+    return False
+
 
 
 # Implements callback when upload button is pressed
@@ -202,20 +284,20 @@ def uploadAction():
     file_path = filedialog.askopenfilename(
         title="Select a file to upload",
         filetypes=(("Text files", "*.txt"), ("All files", "*.*")),
-        initialdir=os.path.join(ROOT_DIR, "user_file_repo")
+        initialdir=os.path.join(ROOT_DIR, "user_file_repo", authenticated_user)
     )
     if file_path:
         file_name = os.path.basename(file_path)
-        uploaded_files = read_filenames()
-        if file_name not in uploaded_files:
+        # User is uploading file for the first time
+        if not isUserFileNamePresent(file_name):
             update_filenames(file_name)
             save_encryption_key(file_name)
+            status_var.set(f"Status: Uploading {os.path.basename(file_path)}")
+            uploadFile(file_path)
         else:
-            status_var.set(f"Status: File {file_name} already uploaded")
-            messagebox.showwarning("Action", f"File {file_name} already uploaded")
+            status_var.set(f"Status: File {file_name} already uploaded by user: {authenticated_user}")
+            messagebox.showwarning("Action", f"File {file_name} already uploaded by user: {authenticated_user}")
             return
-        status_var.set(f"Status: Uploading {os.path.basename(file_path)}")
-        uploadFile(file_path)
     else:
         status_var.set("Status: Upload cancelled")
 
@@ -223,7 +305,7 @@ def uploadAction():
 
 # Implements callback when download button is pressed
 def downloadAction():
-    directory = os.path.join(ROOT_DIR, "user_file_repo")
+    directory = os.path.join(ROOT_DIR, "user_file_repo", authenticated_user)
     os.makedirs(directory, exist_ok=True)
     status_var.set("Status: Listing files for download")
     list_files_for_download(directory)
@@ -232,7 +314,7 @@ def downloadAction():
 
 # Implements callback when list button is pressed
 def listAction():
-    directory = os.path.join(ROOT_DIR, "user_file_repo")
+    directory = os.path.join(ROOT_DIR, "user_file_repo", authenticated_user)
     os.makedirs(directory, exist_ok=True)
     status_var.set("Status: List button pressed")
     # messagebox.showinfo("Action", "Listing files")
@@ -244,53 +326,19 @@ def listAction():
 def read_user_config(file_path):
     credentials = {}
     with open(file_path, 'r') as file:
-        for line in file:
+        lines = file.readlines()
+        for line in lines[:-1]:  # Exclude the last line
             parts = line.strip().split()
             if len(parts) == 2:
                 username, password_hash = parts
                 credentials[username] = password_hash
-    return credentials
+        if lines:  # Ensure there is at least one line
+            last_line = lines[-1].strip()
+            if last_line.startswith("num_users"):
+                num_users = int(last_line.split()[-1])
+    return credentials, num_users
 
 
-# Implementation is another file, will integrate it in main source in the next phase 
-def connect_action():
-    def authenticate():
-        nonlocal attempts_left
-        username = username_entry.get()
-        password = password_entry.get()
-        hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        if username in credentials and credentials[username] == hashed_password:
-            welcome_message = f"Welcome, {username}"
-            messagebox.showinfo("Success", welcome_message)
-            status_var.set(f"Status: {welcome_message}")
-            connect_window.destroy()
-            enable_buttons()
-            connect_button.config(state=tk.DISABLED)
-        else:
-            attempts_left -= 1
-            if attempts_left == 0:
-                messagebox.showerror("Error", "Max login attempts reached. Try again.")
-                connect_window.destroy()
-            else:
-                status_var.set(f"Status: Invalid credentials. {attempts_left} login attempts remaining")
-
-    # Read user config file
-    credentials = read_user_config(user_config_file)
-    attempts_left = 3
-
-    connect_window = tk.Toplevel()
-    connect_window.title("Login")
-
-    tk.Label(connect_window, text="Username:").grid(row=0, column=0, padx=10, pady=5)
-    username_entry = tk.Entry(connect_window)
-    username_entry.grid(row=0, column=1, padx=10, pady=5)
-
-    tk.Label(connect_window, text="Password:").grid(row=1, column=0, padx=10, pady=5)
-    password_entry = tk.Entry(connect_window, show="*")
-    password_entry.grid(row=1, column=1, padx=10, pady=5)
-
-    login_button = tk.Button(connect_window, text="Login", command=authenticate)
-    login_button.grid(row=2, columnspan=2, padx=10, pady=5)
 
 
 def enable_buttons():
@@ -399,5 +447,8 @@ if __name__ == "__main__":
 
     global user_config_file
     user_config_file = os.path.join(ROOT_DIR, "dfs_users.config")
+
+    # metadata_folder = "metadata"
+    authenticated_user = ""
     
     create_main_window()
