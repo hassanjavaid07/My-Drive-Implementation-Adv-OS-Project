@@ -260,9 +260,12 @@ def connect_action():
         password = password_entry.get()
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
         if username in credentials and credentials[username] == hashed_password:
-            messagebox.showinfo("Success", f"Welcome, {username}")
+            welcome_message = f"Welcome, {username}"
+            messagebox.showinfo("Success", welcome_message)
+            status_var.set(f"Status: {welcome_message}")
             connect_window.destroy()
             enable_buttons()
+            connect_button.config(state=tk.DISABLED)
         else:
             attempts_left -= 1
             if attempts_left == 0:
@@ -297,11 +300,18 @@ def enable_buttons():
     disconnect_button.config(state=tk.NORMAL)
 
 
-# Implementation is another file, will integrate it in main source in the next phase 
-def disconnect_action():
-    status_var.set("Status: Disconnect button pressed")
-    messagebox.showinfo("Action", "Disconnect button pressed")
+def disable_buttons():
+    upload_button.config(state=tk.DISABLED)
+    download_button.config(state=tk.DISABLED)
+    list_button.config(state=tk.DISABLED)
+    disconnect_button.config(state=tk.DISABLED)
+    connect_button.config(state=tk.NORMAL)
 
+
+def disconnect_action():
+    disable_buttons()
+    status_var.set("Status: Disconnected")
+    messagebox.showinfo("Action", "You have been disconnected")
 
 # Implements function to create the main window
 def create_main_window():
@@ -343,7 +353,7 @@ def create_main_window():
     # Create a status bar
     global status_var
     status_var = tk.StringVar()
-    status_var.set("Status: Ready")
+    status_var.set("Status: Ready. Press ""Connect"" to enter credentials.")
     status_bar = tk.Label(root, textvariable=status_var, font=("Arial", 10), relief=tk.SUNKEN, anchor=tk.W)
     status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
