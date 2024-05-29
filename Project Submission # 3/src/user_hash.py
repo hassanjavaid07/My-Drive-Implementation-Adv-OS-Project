@@ -16,7 +16,7 @@ def hash_password(password):
 def main():
     # Get password input from the user
     # password = input("Enter your password: ")
-    password = "CryptoSide21"
+    password = "5678"
     # Hash the password
     hashed_password = hash_password(password)
 

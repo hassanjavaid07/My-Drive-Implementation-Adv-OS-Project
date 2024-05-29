@@ -262,6 +262,7 @@ def connect_action():
         if username in credentials and credentials[username] == hashed_password:
             messagebox.showinfo("Success", f"Welcome, {username}")
             connect_window.destroy()
+            enable_buttons()
         else:
             attempts_left -= 1
             if attempts_left == 0:
@@ -289,6 +290,12 @@ def connect_action():
     login_button.grid(row=2, columnspan=2, padx=10, pady=5)
 
 
+def enable_buttons():
+    upload_button.config(state=tk.NORMAL)
+    download_button.config(state=tk.NORMAL)
+    list_button.config(state=tk.NORMAL)
+    disconnect_button.config(state=tk.NORMAL)
+
 
 # Implementation is another file, will integrate it in main source in the next phase 
 def disconnect_action():
@@ -298,24 +305,30 @@ def disconnect_action():
 
 # Implements function to create the main window
 def create_main_window():
+    global root, upload_button, download_button, list_button, connect_button, disconnect_button, status_var
+
     root = tk.Tk()
     root.title("My Drive")
 
-    root.geometry("550x500")
+    root.geometry("600x550")
 
+    # Set the window icon
+    # root.iconbitmap('path_to_your_icon.ico') 
+
+    # Create a main label
     main_label = tk.Label(root, text="My Drive", font=("Arial Bold", 24))
     main_label.pack(pady=20)
 
     commands_frame = tk.LabelFrame(root, text="Commands", padx=10, pady=10)
     commands_frame.pack(pady=10)
 
-    upload_button = ttk.Button(commands_frame, text="Upload", command=uploadAction)
+    upload_button = ttk.Button(commands_frame, text="Upload", command=uploadAction, state=tk.DISABLED)
     upload_button.pack(side=tk.LEFT, padx=5)
 
-    download_button = ttk.Button(commands_frame, text="Download", command=downloadAction)
+    download_button = ttk.Button(commands_frame, text="Download", command=downloadAction, state=tk.DISABLED)
     download_button.pack(side=tk.LEFT, padx=5)
 
-    list_button = ttk.Button(commands_frame, text="List", command=listAction)
+    list_button = ttk.Button(commands_frame, text="List", command=listAction, state=tk.DISABLED)
     list_button.pack(side=tk.LEFT, padx=5)
 
     connect_frame = tk.Frame(root)
@@ -324,19 +337,22 @@ def create_main_window():
     connect_button = ttk.Button(connect_frame, text="Connect", command=connect_action)
     connect_button.pack(side=tk.LEFT, padx=10)
 
-    disconnect_button = ttk.Button(connect_frame, text="Disconnect", command=disconnect_action)
+    disconnect_button = ttk.Button(connect_frame, text="Disconnect", command=disconnect_action, state=tk.DISABLED)
     disconnect_button.pack(side=tk.LEFT, padx=10)
 
+    # Create a status bar
     global status_var
     status_var = tk.StringVar()
     status_var.set("Status: Ready")
     status_bar = tk.Label(root, textvariable=status_var, font=("Arial", 10), relief=tk.SUNKEN, anchor=tk.W)
     status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
-    bottom_label = tk.Label(root, text="Created by: MSCS23001 (Hassan) & MSCS23008 (Saad) as part of Adv OS Project", font=("Arial Bold", 9))
+    # Create a bottom label
+    bottom_label = tk.Label(root, text="Created by MSCS23001 & MSCS23008 as part of Adv OS Project", font=("Arial Bold", 9))
     bottom_label.pack(side=tk.BOTTOM, pady=5)
 
     root.mainloop()
+
 
 # Starts the API
 if __name__ == "__main__":
