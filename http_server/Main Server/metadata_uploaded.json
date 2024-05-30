@@ -1,0 +1,112 @@
+{
+    "The Great Expectations.txt": {
+        "file_name": "The Great Expectations.txt",
+        "chunks": [
+            {
+                "chunk_index": 0,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_0.dat",
+                "chunk_name": "chunk_0.dat"
+            },
+            {
+                "chunk_index": 1,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_1.dat",
+                "chunk_name": "chunk_1.dat"
+            },
+            {
+                "chunk_index": 2,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_2.dat",
+                "chunk_name": "chunk_2.dat"
+            },
+            {
+                "chunk_index": 3,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_3.dat",
+                "chunk_name": "chunk_3.dat"
+            },
+            {
+                "chunk_index": 4,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_4.dat",
+                "chunk_name": "chunk_4.dat"
+            },
+            {
+                "chunk_index": 5,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_5.dat",
+                "chunk_name": "chunk_5.dat"
+            },
+            {
+                "chunk_index": 6,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_6.dat",
+                "chunk_name": "chunk_6.dat"
+            }
+        ]
+    },
+    "The Hiddern Garden.txt": {
+        "file_name": "The Hiddern Garden.txt",
+        "chunks": [
+            {
+                "chunk_index": 0,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_0.dat",
+                "chunk_name": "chunk_0.dat"
+            },
+            {
+                "chunk_index": 1,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_1.dat",
+                "chunk_name": "chunk_1.dat"
+            },
+            {
+                "chunk_index": 2,
+                "chunk_server": {
+                    "upload_url": "http://192.168.1.103:5001/upload",
+                    "download_url": "http://192.168.1.103:5001/download/",
+                    "list_files_url": "http://192.168.1.103:5001/list_files"
+                },
+                "chunk_path": "temp_chunks\\chunk_2.dat",
+                "chunk_name": "chunk_2.dat"
+            }
+        ]
+    }
+}

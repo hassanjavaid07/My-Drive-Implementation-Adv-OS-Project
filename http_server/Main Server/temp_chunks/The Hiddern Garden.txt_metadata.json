@@ -1,0 +1,35 @@
+{
+    "file_name": "The Hiddern Garden.txt",
+    "chunks": [
+        {
+            "chunk_index": 0,
+            "chunk_server": {
+                "upload_url": "http://192.168.1.103:5001/upload",
+                "download_url": "http://192.168.1.103:5001/download/",
+                "list_files_url": "http://192.168.1.103:5001/list_files"
+            },
+            "chunk_path": "temp_chunks\\chunk_0.dat",
+            "chunk_name": "chunk_0.dat"
+        },
+        {
+            "chunk_index": 1,
+            "chunk_server": {
+                "upload_url": "http://192.168.1.103:5001/upload",
+                "download_url": "http://192.168.1.103:5001/download/",
+                "list_files_url": "http://192.168.1.103:5001/list_files"
+            },
+            "chunk_path": "temp_chunks\\chunk_1.dat",
+            "chunk_name": "chunk_1.dat"
+        },
+        {
+            "chunk_index": 2,
+            "chunk_server": {
+                "upload_url": "http://192.168.1.103:5001/upload",
+                "download_url": "http://192.168.1.103:5001/download/",
+                "list_files_url": "http://192.168.1.103:5001/list_files"
+            },
+            "chunk_path": "temp_chunks\\chunk_2.dat",
+            "chunk_name": "chunk_2.dat"
+        }
+    ]
+}
