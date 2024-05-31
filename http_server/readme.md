@@ -22,7 +22,7 @@ ii) SAAD BIN HAMMAD, MSCS23008
 
 - Implemented HTTPS server using python libraries Flask and Requests for connection in local area network.
 - Implemented basic file upload and download functionalities.
-- Added chunk replication for fault tolerance.
+- Added chunk replication factor of 2 for fault tolerance.
 - Improved error handling and logging.
 - Integrated Zeroconf for automatic service discovery in local area network
 - Enhanced security with AES-256 encryption and SHA-256 hashing.
