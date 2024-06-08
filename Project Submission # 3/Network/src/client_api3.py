@@ -1,11 +1,11 @@
 """
-###<u> **ADVANCED OPERATING SYSTEM PROJECT INTERMEDIATE SUBMISSION # 2 ** </u>
+###<u> **ADVANCED OPERATING SYSTEM PROJECT INTERMEDIATE SUBMISSION # 3 ** </u>
 * **NAME = HASSAN JAVAID, SAAD BIN HAMMAD**
 * **ROLL NO. = MSCS23001, MSCS23008**'
 * **PROJECT_ABSTRACT =  Implementation of Distributed File System (DFS) with 
-                        master-slave MapReduce file processing and client/server 
+                        master-slave file processing and client/server 
                         communicaiton**
-* **DATE OF SUBMISSION = MAY 21, 2024**
+* **DATE OF SUBMISSION = JUNE 8, 2024**
 """
 
 
@@ -30,8 +30,6 @@ metadata_folder = "metadata"
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# # Define ROOT_DIR
-# ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def connect_to_chunk_servers(num_chunk_servers):
