@@ -509,7 +509,6 @@ if __name__ == "__main__":
     num_chunk_servers = int(config.get("num_chunk_servers"))
     master_key = config.get("master_key")
     # print(master_key)
-    num_map_workers = int(config.get("num_map_workers"))
     replication_factor = int(config.get("replication_factor"))  
 
     
