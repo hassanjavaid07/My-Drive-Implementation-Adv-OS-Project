@@ -9,15 +9,15 @@
 """
 
 
-import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
-from tkinter import filedialog
 import os
 import json
 import platform
 import subprocess
 import logging
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+from tkinter import filedialog
 global ROOT_DIR
 from dfscontrol_copy import generateChecksum, get_random_bytes, readConfigFile
 from main_http_server import wait_for_chunk_servers, download_file_from_chunk_servers, upload_file
@@ -31,20 +31,9 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-
+# Implements connection to chunkservers via sockets protocol
 def connect_to_chunk_servers(num_chunk_servers):
     try:
-        # num_chunk_servers_input = input("How many chunk servers would you like to connect? ").strip()
-        # if num_chunk_servers_input:
-        #     try:
-        #         num_chunk_servers = int(num_chunk_servers_input)
-        #     except ValueError:
-        #         print("Invalid input. Please enter an integer.")
-        #         num_chunk_servers = 2
-        # else:
-        #     print("No input provided. Using default value of 2 chunk servers.")
-        #     num_chunk_servers = 2
-
         global chunk_servers
         chunk_servers = wait_for_chunk_servers(num_chunk_servers)
         print(f"Connected to {len(chunk_servers)} chunk servers.")
@@ -52,7 +41,8 @@ def connect_to_chunk_servers(num_chunk_servers):
         logger.error(f"Error connecting to chunk servers: {e}")
 
 
-# Function to read the list of filenames from filename.txt file
+
+# Implements function to read the list of filenames from filename.txt file
 def read_filenames():
     if os.path.exists(filenames_file):
         with open(filenames_file, "r") as file:
@@ -62,7 +52,7 @@ def read_filenames():
 
 
 
-# Function to update the list of filenames in filename.txt file
+# Implements function to update the list of filenames in filename.txt file
 def update_filenames(filename):
     with open(filenames_file, "a") as file:
         file.write(f"{filename}\n")
@@ -81,7 +71,6 @@ def uploadFile(file_path):
     encryption_key = get_encryption_key(fname)
     upload_file_to_chunk_servers(file_path, chunk_servers, chunk_size, encryption_key, replication_factor, 
                                  authenticated_user, metadata_file, master_key_bytes, ROOT_DIR)
-    # putFile(file_path, chunk_servers, chunk_size, encryption_key, metadata_file, master_key_bytes, ROOT_DIR)
     status_var.set(f"File '{fname}' uploaded successfully to chunkservers.")
 
 
@@ -110,7 +99,6 @@ def downloadFile(file_path, encryption_key):
         status_var.set("Invalid filename and/or Metadata file not found. Download Cancelled..")
         return
 
-    # getFile(metadata_file, output_file, encryption_key, master_key_bytes, ROOT_DIR)
     download_file_from_chunk_servers(metadata_file, output_file, chunk_servers, 
                                      encryption_key, master_key_bytes, ROOT_DIR)
 
@@ -178,36 +166,6 @@ def list_files_for_download(directory):
 
     open_list_window()
 
-    # metadata = read_metadata_uploaded(metadata_file_path)
-
-    # if metadata:
-    #     file_names = list(metadata.keys())
-    #     if file_names:
-    #         def select_file():
-    #             selected_file = listbox.get(tk.ACTIVE)
-    #             if selected_file:
-    #                 output_path = filedialog.asksaveasfilename(initialdir=os.path.join(ROOT_DIR, "outputs", "saad"), title="Save file as", initialfile=selected_file)
-    #                 if output_path:
-    #                     download_file_from_chunk_servers(selected_file, output_path, chunk_servers, master_key)
-    #                 download_window.destroy()
-    #             else:
-    #                 print("No file selected.")
-
-    #         download_window = tk.Toplevel(root)
-    #         download_window.title("Select file to download")
-    #         download_window.geometry("300x300")
-
-    #         listbox = tk.Listbox(download_window, selectmode=tk.SINGLE)
-    #         for file_name in file_names:
-    #             listbox.insert(tk.END, file_name)
-    #         listbox.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-
-    #         select_button = tk.Button(download_window, text="Download", command=select_file)
-    #         select_button.pack(pady=10)
-    #     else:
-    #         print("No files available in metadata.")
-    # else:
-    #     print("No metadata found or metadata is empty.")
 
 
 
@@ -245,12 +203,14 @@ def listFiles(directory):
     open_list_window()
 
 
-#g Implements function to generate and save an encryption key
+
+# Implements function to generate and save an encryption key
 def save_encryption_key(filename):
     encryption_key = get_random_bytes(32)
     with open(enc_config_fn, "a") as file:
         file.write(f"{authenticated_user}:{filename}:{encryption_key.hex()}\n")
     print(f"Encryption key for {filename} saved.")
+
 
 
 # Implements function to retrieve an encryption key for a given filename
@@ -268,39 +228,8 @@ def get_encryption_key(filename):
     return None
 
 
-# OLD --- Implements callback when upload button is pressed
-def uploadAction():
-    file_path = filedialog.askopenfilename(
-        title="Select a file to upload",
-        filetypes=(("Text files", "*.txt"), ("All files", "*.*")),
-        initialdir=os.path.join(ROOT_DIR, "user_file_repo")
-    )
-    if file_path:
-        file_name = os.path.basename(file_path)
-        uploaded_files = read_filenames()
-        if file_name not in uploaded_files:
-            update_filenames(file_name)
-            save_encryption_key(file_name)
-        else:
-            status_var.set(f"Status: File {file_name} already uploaded")
-            messagebox.showwarning("Action", f"File {file_name} already uploaded")
-            return
-        status_var.set(f"Status: Uploading {os.path.basename(file_path)}")
-        uploadFile(file_path)
-    else:
-        status_var.set("Status: Upload cancelled")
 
-
-
-# OLD --- Implements callback when download button is pressed
-def downloadAction():
-    directory = os.path.join(ROOT_DIR, "user_file_repo")
-    os.makedirs(directory, exist_ok=True)
-    status_var.set("Status: Listing files for download")
-    list_files_for_download(directory)
-
-
-
+# Implements enabling of buttons after successful user login
 def enable_buttons():
     upload_button.config(state=tk.NORMAL)
     download_button.config(state=tk.NORMAL)
@@ -308,12 +237,14 @@ def enable_buttons():
     disconnect_button.config(state=tk.NORMAL)
 
 
+# Implements disabling of buttons at startup
 def disable_buttons():
     upload_button.config(state=tk.DISABLED)
     download_button.config(state=tk.DISABLED)
     list_button.config(state=tk.DISABLED)
     disconnect_button.config(state=tk.DISABLED)
     connect_button.config(state=tk.NORMAL)
+
 
 
 # Implements callback when list button is pressed
@@ -327,8 +258,7 @@ def listAction():
 
 
 
-
-# Function to read user config file and store contents in a dictionary
+# Implements function to read user config file and store contents in a dictionary
 def read_user_config(file_path):
     credentials = {}
     num_users = 0
@@ -347,6 +277,7 @@ def read_user_config(file_path):
 
 
 
+# Implements function to create login window for user login process
 def createLoginWindow(credentials, on_success):
     def authenticateUser():
         nonlocal attempts_left
@@ -386,6 +317,7 @@ def createLoginWindow(credentials, on_success):
 
     login_button = tk.Button(connect_window, text="Login", command=authenticateUser)
     login_button.grid(row=2, columnspan=2, padx=10, pady=5)
+
 
 
 # Implements callback for connect button 
@@ -454,6 +386,7 @@ def on_upload_button_click():
 
 
 
+# Wrapper function for uploading file to chunk server after creating file chunks
 def upload_file_to_chunk_servers(file_path, chunk_servers, chunk_size, encryption_key, replication_factor, 
                                  authenticated_user, metadata_file, master_key_bytes, ROOT_DIR):
     try:
@@ -466,17 +399,15 @@ def upload_file_to_chunk_servers(file_path, chunk_servers, chunk_size, encryptio
 
 
 
+
 # Implements callback when download button is pressed
 def on_download_button_click():
-    # metadata_file_path = r'C:\Users\saadh\OneDrive\Desktop\My-Drive-Implementation-http-server\Project Submission # 3\metadata_uploaded.json'
     directory = os.path.join(ROOT_DIR, "user_file_repo", authenticated_user)
     os.makedirs(directory, exist_ok=True)
     status_var.set("Status: Listing files for download")
     list_files_for_download(directory)
     
     
-
-
 
 
 # Implementation is another file, will integrate it in main source in the next phase 
@@ -582,12 +513,6 @@ if __name__ == "__main__":
     replication_factor = int(config.get("replication_factor"))  
 
     
-    # Create chunk servers. 
-    # At this stage the directory folders represent chunk servers and hold chunk data of input file
-    # chunk_servers = createChunkServers(num_chunk_servers)
-
-    
-
     # Encryption key handling for file encryption
     global enc_config_fn
     enc_config_fn = os.path.join(ROOT_DIR, "enc_key.config")

@@ -7,10 +7,6 @@ import time
 import socket
 from zeroconf import Zeroconf, ServiceBrowser
 from dfscontrol_copy import readConfigFile, getChunkServer, splitFile, mergeChunks, encryptChunk, decryptChunk, writeJsonFile, generateChecksum, decryptFile, encryptFile
-import sys
-import os
-import requests
-import logging
 
 
 # Define ROOT_DIR

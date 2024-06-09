@@ -1,0 +1,21 @@
+{
+    "The Hidden Garden.txt": {
+        "chunks": [
+            {
+                "chunk_index": 1,
+                "chunk_name": "hassan_The Hidden Garden.txt_chunk_0.dat",
+                "chunk_path": "c:\\Users\\HP\\OneDrive\\Documents\\Univ Data\\ITU CS\\Advanced Operating System\\Project Clone\\My-Drive-Implementation-Adv-OS-Project\\Project Submission # 3\\Network\\src\\temp_chunks\\hassan_The Hidden Garden.txt_chunk_0.dat"
+            },
+            {
+                "chunk_index": 2,
+                "chunk_name": "hassan_The Hidden Garden.txt_chunk_1.dat",
+                "chunk_path": "c:\\Users\\HP\\OneDrive\\Documents\\Univ Data\\ITU CS\\Advanced Operating System\\Project Clone\\My-Drive-Implementation-Adv-OS-Project\\Project Submission # 3\\Network\\src\\temp_chunks\\hassan_The Hidden Garden.txt_chunk_1.dat"
+            },
+            {
+                "chunk_index": 3,
+                "chunk_name": "hassan_The Hidden Garden.txt_chunk_2.dat",
+                "chunk_path": "c:\\Users\\HP\\OneDrive\\Documents\\Univ Data\\ITU CS\\Advanced Operating System\\Project Clone\\My-Drive-Implementation-Adv-OS-Project\\Project Submission # 3\\Network\\src\\temp_chunks\\hassan_The Hidden Garden.txt_chunk_2.dat"
+            }
+        ]
+    }
+}
